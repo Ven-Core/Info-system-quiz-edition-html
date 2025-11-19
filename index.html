@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information System Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .quiz-container {
+            background: rgba(30, 30, 46, 0.95);
+            border: 3px solid #4a4a8a;
+            border-radius: 15px;
+            box-shadow: 0 0 30px #6366f1;
+            margin: 10px auto;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .terminal-header {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+            color: white;
+            padding: 15px;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .menu-item {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: 2px solid #a855f7;
+            color: white;
+            padding: 12px 25px;
+            margin: 8px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #6366f1;
+        }
+        
+        .question-box {
+            background: rgba(45, 45, 65, 0.8);
+            border: 2px solid #6366f1;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .answer-option {
+            background: linear-gradient(135deg, #4a4a8a, #6366f1);
+            border: 1px solid #8b5cf6;
+            color: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            font-size: 0.95em;
+        }
+        
+        .answer-option:hover {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px #6366f1;
+        }
+        
+        .answer-option.correct {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #047857;
+        }
+        
+        .answer-option.incorrect {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #b91c1c;
+        }
+        
+        .progress-container {
+            background: rgba(45, 45, 65, 0.8);
+            border: 2px solid #6366f1;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+            height: 12px;
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+        
+        .stats-box {
+            background: rgba(45, 45, 65, 0.8);
+            border: 2px solid #6366f1;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #8b5cf6;
+            margin: 20px 0;
+            text-shadow: 0 0 10px #6366f1;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #6366f1;
+            animation: confettiFall 3s linear infinite;
+        }
+        
+        @keyframes confettiFall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #6366f1; }
+            to { box-shadow: 0 0 20px #8b5cf6, 0 0 30px #a855f7; }
+        }
+    </style>
+</head>
+<body>
+    <div id="confettiContainer"></div>
+    
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="quiz-container glow">
+                    <div class="terminal-header text-center">
+                        <h4>Information System Quiz</h4>
+                        <p class="mb-0">Test Your Knowledge</p>
+                    </div>
+                    
+                    <div class="p-3">
+                        <div id="mainMenu">
+                            <div class="text-center mb-3">
+                                <h5>Main Menu</h5>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn menu-item" id="playBtn">
+                                    Start Quiz
+                                </button>
+                                <button class="btn menu-item" id="howToPlayBtn">
+                                    How to Play
+                                </button>
+                            </div>
+                            <div class="stats-box mt-3">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small>High Score</small>
+                                        <div id="highScore">0</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small>Quizzes Done</small>
+                                        <div id="quizzesCompleted">0</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small>Success Rate</small>
+                                        <div id="successRate">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="howToPlay" class="d-none">
+                            <div class="text-center mb-3">
+                                <h5>How to Play</h5>
+                            </div>
+                            <div class="question-box">
+                                <ul class="list-unstyled small">
+                                    <li>• Answer 15 Information System questions</li>
+                                    <li>• Choose the correct option</li>
+                                    <li>• Each correct answer gives 1 point</li>
+                                    <li>• Complete all questions to see your score</li>
+                                </ul>
+                            </div>
+                            <button class="btn menu-item w-100 mt-2" id="backFromHowTo">
+                                Back to Menu
+                            </button>
+                        </div>
+                        
+                        <div id="quizScreen" class="d-none">
+                            <div class="progress-container">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span>Progress</span>
+                                    <span id="progressText">0/15</span>
+                                </div>
+                                <div class="progress" style="height: 12px; background: rgba(45, 45, 65, 0.8);">
+                                    <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="question-box">
+                                <h6 id="questionText">Loading question...</h6>
+                            </div>
+                            
+                            <div id="answersContainer" class="mb-3">
+                            </div>
+                            
+                            <div class="stats-box">
+                                <div class="row text-center small">
+                                    <div class="col-3">
+                                        <div>Score</div>
+                                        <div id="currentScore">0</div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div>Correct</div>
+                                        <div id="correctCount">0</div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div>Wrong</div>
+                                        <div id="incorrectCount">0</div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div>Left</div>
+                                        <div id="remainingCount">15</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="resultScreen" class="d-none result-container">
+                            <h5>Quiz Completed!</h5>
+                            <div class="score-display" id="finalScore">0/15</div>
+                            <div class="stats-box">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <small>Correct Answers</small>
+                                        <div id="finalCorrect">0</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small>Percentage</small>
+                                        <div id="finalPercentage">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2 mt-3">
+                                <button class="btn menu-item" id="retryBtn">
+                                    Retry Quiz
+                                </button>
+                                <button class="btn menu-item" id="mainMenuBtn">
+                                    Main Menu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainMenu = document.getElementById('mainMenu');
+            const howToPlay = document.getElementById('howToPlay');
+            const quizScreen = document.getElementById('quizScreen');
+            const resultScreen = document.getElementById('resultScreen');
+            const confettiContainer = document.getElementById('confettiContainer');
+
+            const quizData = [
+                {
+                    question: "What is the primary purpose of an Information System?",
+                    answers: [
+                        "To manage hardware resources",
+                        "To collect, process, store, and distribute information",
+                        "To develop software applications",
+                        "To manage network security"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Which component is NOT part of an Information System?",
+                    answers: [
+                        "Hardware",
+                        "Software",
+                        "Data",
+                        "Marketing Strategy"
+                    ],
+                    correct: 3
+                },
+                {
+                    question: "What does ERP stand for in Information Systems?",
+                    answers: [
+                        "Enterprise Resource Planning",
+                        "Electronic Resource Processing",
+                        "Enterprise Recovery Plan",
+                        "Electronic Record Protection"
+                    ],
+                    correct: 0
+                },
+                {
+                    question: "Which database model is most commonly used today?",
+                    answers: [
+                        "Hierarchical",
+                        "Network",
+                        "Relational",
+                        "Object-oriented"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "What is the purpose of a CRM system?",
+                    answers: [
+                        "Manage customer relationships",
+                        "Control resource management",
+                        "Handle financial transactions",
+                        "Monitor network performance"
+                    ],
+                    correct: 0
+                },
+                {
+                    question: "Which phase comes first in SDLC?",
+                    answers: [
+                        "Implementation",
+                        "Testing",
+                        "Planning",
+                        "Maintenance"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "What is the main function of a DBMS?",
+                    answers: [
+                        "Create web pages",
+                        "Manage databases",
+                        "Design networks",
+                        "Develop software"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Which is an example of a NoSQL database?",
+                    answers: [
+                        "MySQL",
+                        "Oracle",
+                        "MongoDB",
+                        "SQL Server"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "What does BI stand for in Information Systems?",
+                    answers: [
+                        "Business Intelligence",
+                        "Binary Interface",
+                        "Basic Infrastructure",
+                        "Backup Implementation"
+                    ],
+                    correct: 0
+                },
+                {
+                    question: "Which protocol is used for secure web communication?",
+                    answers: [
+                        "HTTP",
+                        "FTP",
+                        "HTTPS",
+                        "SMTP"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "What is the primary goal of IT governance?",
+                    answers: [
+                        "Maximize profits",
+                        "Ensure IT aligns with business objectives",
+                        "Reduce hardware costs",
+                        "Increase software development speed"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Which cloud service model provides hardware infrastructure?",
+                    answers: [
+                        "SaaS",
+                        "PaaS",
+                        "IaaS",
+                        "DaaS"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "What is data normalization used for?",
+                    answers: [
+                        "Data encryption",
+                        "Reducing data redundancy",
+                        "Data backup",
+                        "Data transmission"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Which is a characteristic of big data?",
+                    answers: [
+                        "Small volume",
+                        "Structured format only",
+                        "High velocity",
+                        "Limited variety"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "What does SQL stand for?",
+                    answers: [
+                        "Simple Query Language",
+                        "Structured Question Logic",
+                        "Structured Query Language",
+                        "System Query Layer"
+                    ],
+                    correct: 2
+                }
+            ];
+
+            let currentQuestion = 0;
+            let score = 0;
+            let correctAnswers = 0;
+            let incorrectAnswers = 0;
+            let highScore = localStorage.getItem('isHighScore') || 0;
+            let quizzesCompleted = localStorage.getItem('isQuizzesCompleted') || 0;
+            let totalCorrect = localStorage.getItem('isTotalCorrect') || 0;
+            let totalQuestions = localStorage.getItem('isTotalQuestions') || 0;
+
+            function updateGlobalStats() {
+                document.getElementById('highScore').textContent = highScore;
+                document.getElementById('quizzesCompleted').textContent = quizzesCompleted;
+                document.getElementById('successRate').textContent = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) + '%' : '0%';
+            }
+
+            function createConfetti() {
+                for (let i = 0; i < 20; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = ['#6366f1', '#8b5cf6', '#a855f7'][Math.floor(Math.random() * 3)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confettiContainer.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }
+            }
+
+            document.getElementById('playBtn').addEventListener('click', startQuiz);
+            document.getElementById('howToPlayBtn').addEventListener('click', showHowToPlay);
+            document.getElementById('backFromHowTo').addEventListener('click', showMainMenu);
+            document.getElementById('retryBtn').addEventListener('click', startQuiz);
+            document.getElementById('mainMenuBtn').addEventListener('click', showMainMenu);
+
+            function startQuiz() {
+                currentQuestion = 0;
+                score = 0;
+                correctAnswers = 0;
+                incorrectAnswers = 0;
+                mainMenu.classList.add('d-none');
+                resultScreen.classList.add('d-none');
+                quizScreen.classList.remove('d-none');
+                loadQuestion();
+                updateStats();
+            }
+
+            function showHowToPlay() {
+                mainMenu.classList.add('d-none');
+                howToPlay.classList.remove('d-none');
+            }
+
+            function showMainMenu() {
+                howToPlay.classList.add('d-none');
+                quizScreen.classList.add('d-none');
+                resultScreen.classList.add('d-none');
+                mainMenu.classList.remove('d-none');
+                updateGlobalStats();
+            }
+
+            function showResult() {
+                quizScreen.classList.add('d-none');
+                resultScreen.classList.remove('d-none');
+                
+                const percentage = Math.round((correctAnswers / quizData.length) * 100);
+                document.getElementById('finalScore').textContent = `${correctAnswers}/${quizData.length}`;
+                document.getElementById('finalCorrect').textContent = correctAnswers;
+                document.getElementById('finalPercentage').textContent = percentage + '%';
+                
+                if (correctAnswers > highScore) {
+                    highScore = correctAnswers;
+                    localStorage.setItem('isHighScore', highScore);
+                }
+                
+                quizzesCompleted = parseInt(quizzesCompleted) + 1;
+                totalCorrect = parseInt(totalCorrect) + correctAnswers;
+                totalQuestions = parseInt(totalQuestions) + quizData.length;
+                
+                localStorage.setItem('isQuizzesCompleted', quizzesCompleted);
+                localStorage.setItem('isTotalCorrect', totalCorrect);
+                localStorage.setItem('isTotalQuestions', totalQuestions);
+                
+                if (percentage >= 80) {
+                    createConfetti();
+                }
+            }
+
+            function loadQuestion() {
+                const question = quizData[currentQuestion];
+                document.getElementById('questionText').textContent = `Q${currentQuestion + 1}: ${question.question}`;
+                
+                const answersContainer = document.getElementById('answersContainer');
+                answersContainer.innerHTML = '';
+                
+                question.answers.forEach((answer, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'btn answer-option';
+                    button.innerHTML = `${['A', 'B', 'C', 'D'][index]}. ${answer}`;
+                    button.addEventListener('click', () => selectAnswer(index));
+                    answersContainer.appendChild(button);
+                });
+                
+                updateProgress();
+            }
+
+            function selectAnswer(selectedIndex) {
+                const question = quizData[currentQuestion];
+                const answerButtons = document.querySelectorAll('.answer-option');
+                
+                answerButtons.forEach((button, index) => {
+                    button.disabled = true;
+                    if (index === question.correct) {
+                        button.classList.add('correct');
+                    } else if (index === selectedIndex && index !== question.correct) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                if (selectedIndex === question.correct) {
+                    score++;
+                    correctAnswers++;
+                } else {
+                    incorrectAnswers++;
+                }
+                
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < quizData.length) {
+                        loadQuestion();
+                    } else {
+                        showResult();
+                    }
+                    updateStats();
+                }, 1000);
+            }
+
+            function updateProgress() {
+                const progress = ((currentQuestion + 1) / quizData.length) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressText').textContent = `${currentQuestion + 1}/${quizData.length}`;
+            }
+
+            function updateStats() {
+                document.getElementById('currentScore').textContent = score;
+                document.getElementById('correctCount').textContent = correctAnswers;
+                document.getElementById('incorrectCount').textContent = incorrectAnswers;
+                document.getElementById('remainingCount').textContent = quizData.length - currentQuestion - 1;
+            }
+
+            updateGlobalStats();
+        });
+    </script>
+</body>
+</html>
